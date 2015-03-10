@@ -26,26 +26,104 @@ static void print_device_info(cl_device_id device) {
 
     printf("  %-14s %s\n  %-14s %s\n  %-14s %u\n  %-14s %u MHz\n  %-14s %llu MB\n", "Name:", name, "Vendor:", vendor, "Compute unit:", n_compute_unit, "Clock freq.:", max_clock_freq, "Mem. size:", mem_size/(1<<20));
 }
+
+const char *opencl_error_string(cl_int err)
+{
+  const char *strings[] = {
+    "CL_SUCCESS",
+    "CL_INVALID_PLATFORM",
+    "CL_INVALID_CONTEXT",
+    "CL_INVALID_VALUE",
+    "CL_DEVICE_NOT_AVAILABLE",
+    "CL_DEVICE_NOT_FOUND",
+    "CL_OUT_OF_HOST_MEMORY",
+    "CL_INVALID_DEVICE_TYPE",
+    "UNKNOWN",
+  };
+
+  switch (err) {
+  case CL_SUCCESS:
+    return strings[0];
+  case CL_INVALID_PLATFORM:
+    return strings[1];
+  case CL_INVALID_CONTEXT:
+    return strings[2];
+  case CL_INVALID_VALUE:
+    return strings[3];
+  case CL_DEVICE_NOT_AVAILABLE:
+    return strings[4];
+  case CL_DEVICE_NOT_FOUND:
+    return strings[5];
+  case CL_OUT_OF_HOST_MEMORY:
+    return strings[6];
+  case CL_INVALID_DEVICE_TYPE:
+    return strings[7];
+  default:
+    return strings[8];
+  }
+}
  
-static void print_all_devices_info()
+static void print_all_devices_info(cl_platform_id platform_id)
 {
     int i;
     cl_context context;
     size_t length;
+    cl_platform_id platforms[16];
     cl_device_id devices[16];
+    cl_int ret;
+    cl_uint num_platforms;
 
-    context = clCreateContextFromType(0, CL_DEVICE_TYPE_ALL, NULL, NULL, NULL);
-    clGetContextInfo(
-         context, CL_CONTEXT_DEVICES, sizeof(devices), devices, &length);
+    cl_context_properties prop[]
+        = {CL_CONTEXT_PLATFORM, (cl_context_properties)platform_id, 0};
+
+    context = clCreateContextFromType(prop, CL_DEVICE_TYPE_ALL, NULL, NULL, &ret);
+    if (context == NULL) {
+      printf("clCreateContextFromType: %s\n", opencl_error_string(ret));
+      return;
+    }
+
+    ret = clGetContextInfo(context, CL_CONTEXT_DEVICES,
+			   sizeof(devices), devices, &length);
+    if (ret != CL_SUCCESS) {
+      printf("clGetContextInfo: %s\n", opencl_error_string(ret));
+      return;
+    }
  
-    printf("The following devices are available for use:\n");
     int num_devices = (int)(length / sizeof(cl_device_id));
     for (i = 0; i < num_devices; i++) {
-      printf("#%d\n", i+1);
+      printf("Device #%d\n", i+1);
         print_device_info(devices[i]);
     }
 }
 
+static void print_all_platforms_info()
+{
+    int i;
+    cl_context context;
+    size_t length;
+    cl_platform_id platforms[16];
+    cl_device_id devices[16];
+    cl_int ret;
+    cl_uint num_platforms;
+
+    ret = clGetPlatformIDs(sizeof(platforms), platforms, &num_platforms);
+    if (ret != CL_SUCCESS) {
+      printf("clGetPlatformIds: %s\n", opencl_error_string(ret));
+      return;
+    }
+    printf("The number of OpenCL platforms available: %u\n", num_platforms);
+    if (num_platforms <= 0) {
+      return;
+    }
+
+    printf("The following devices are available for use:\n");
+
+    for (i = 0; i < num_platforms; i++) {
+      printf("Platform #%d\n", i+1);
+      print_all_devices_info(platforms[i]);
+    }
+}
+
 int main(int argc, const char* argv[]) {
-    print_all_devices_info();
+    print_all_platforms_info();
 }
