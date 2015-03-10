@@ -30,9 +30,11 @@ static void print_device_info(cl_device_id device) {
 static void print_all_devices_info()
 {
     int i;
-    cl_context context = gcl_get_context();
+    cl_context context;
     size_t length;
     cl_device_id devices[16];
+
+    context = clCreateContextFromType(0, CL_DEVICE_TYPE_ALL, NULL, NULL, NULL);
     clGetContextInfo(
          context, CL_CONTEXT_DEVICES, sizeof(devices), devices, &length);
  
