@@ -10,12 +10,19 @@ OpenCLを使ったプロジェクトのひな形として作りました。Autot
 
 # ビルド
 
+以下のものが必要です。
+
+- autoconf
+- automake
+- OpenCLヘッダ・ライブラリ
+
 ```
+$ autoreconf -vfi
 $ ./configure
 $ make
 ```
 
-make installしてもいいですけど、特にオススメしません。
+make installしてもいいですけど、オススメしません。
 
 # 実行例
 

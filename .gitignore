@@ -44,4 +44,15 @@ Makefile.in
 /missing
 /stamp-h1
 
+.deps/
+Makefile
+/config.guess
+/config.h
+/config.h.in
+/config.log
+/config.status
+/config.sub
 
+# Project specific files
+
+/clinfo
