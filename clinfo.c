@@ -38,6 +38,7 @@ const char *opencl_error_string(cl_int err)
     "CL_DEVICE_NOT_FOUND",
     "CL_OUT_OF_HOST_MEMORY",
     "CL_INVALID_DEVICE_TYPE",
+    "CL_PLATFORM_NOT_FOUND_KHR",
     "UNKNOWN",
   };
 
@@ -58,8 +59,10 @@ const char *opencl_error_string(cl_int err)
     return strings[6];
   case CL_INVALID_DEVICE_TYPE:
     return strings[7];
-  default:
+  case CL_PLATFORM_NOT_FOUND_KHR:
     return strings[8];
+  default:
+    return strings[9];
   }
 }
  
