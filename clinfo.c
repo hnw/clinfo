@@ -12,7 +12,26 @@
 #   error no cl.h nor opencl.h
 # endif
 
-static void print_device_info(cl_device_id device) {
+static void print_platform_info(cl_platform_id platform_id)
+{
+    char name[128];
+    char profile[128];
+    char vendor[128];
+    char version[128];
+ 
+    clGetPlatformInfo(platform_id, CL_PLATFORM_NAME, 128, name, NULL);
+    clGetPlatformInfo(platform_id, CL_PLATFORM_PROFILE, 128, profile, NULL);
+    clGetPlatformInfo(platform_id, CL_PLATFORM_VENDOR, 128, vendor, NULL);
+    clGetPlatformInfo(platform_id, CL_PLATFORM_VERSION, 128, version, NULL);
+
+    printf("  %-14s %s\n  %-14s %s\n  %-14s %s\n  %-14s %s\n",
+	   "Name:", name, "Profile:", profile,
+	   "Vendor:", vendor, "Version:", version);
+	   
+}
+
+static void print_device_info(cl_device_id device)
+{
     char name[128];
     char vendor[128];
     cl_uint n_compute_unit, max_clock_freq;
@@ -24,7 +43,11 @@ static void print_device_info(cl_device_id device) {
     clGetDeviceInfo(device, CL_DEVICE_MAX_CLOCK_FREQUENCY, sizeof(cl_uint), &max_clock_freq, NULL);
     clGetDeviceInfo(device, CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(cl_ulong), &mem_size, NULL);
       
-    printf("  %-14s %s\n  %-14s %s\n  %-14s %u\n  %-14s %u MHz\n  %-14s %lu MB\n", "Name:", name, "Vendor:", vendor, "Compute unit:", n_compute_unit, "Clock freq.:", max_clock_freq, "Mem. size:", (long)(mem_size/(1<<20)));
+    printf("  %-14s %s\n  %-14s %s\n  %-14s %u\n  %-14s %u MHz\n  %-14s %lu MB\n",
+	   "Name:", name, "Vendor:", vendor,
+	   "Compute units:", n_compute_unit,
+	   "Clock freq.:", max_clock_freq,
+	   "Memory:", (long)(mem_size/(1<<20)));
 }
 
 const char *opencl_error_strings[] = {
@@ -124,6 +147,7 @@ static void print_all_platforms_info()
 
     for (i = 0; i < num_platforms; i++) {
       printf("Platform #%d\n", i+1);
+      print_platform_info(platforms[i]);
       print_all_devices_info(platforms[i]);
     }
 }
