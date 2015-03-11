@@ -27,43 +27,43 @@ static void print_device_info(cl_device_id device) {
     printf("  %-14s %s\n  %-14s %s\n  %-14s %u\n  %-14s %u MHz\n  %-14s %lu MB\n", "Name:", name, "Vendor:", vendor, "Compute unit:", n_compute_unit, "Clock freq.:", max_clock_freq, "Mem. size:", (long)(mem_size/(1<<20)));
 }
 
+const char *opencl_error_strings[] = {
+  "CL_SUCCESS",
+  "CL_INVALID_PLATFORM",
+  "CL_INVALID_CONTEXT",
+  "CL_INVALID_VALUE",
+  "CL_DEVICE_NOT_AVAILABLE",
+  "CL_DEVICE_NOT_FOUND",
+  "CL_OUT_OF_HOST_MEMORY",
+  "CL_INVALID_DEVICE_TYPE",
+  "CL_PLATFORM_NOT_FOUND_KHR",
+  "UNKNOWN",
+};
+
 const char *opencl_error_string(cl_int err)
 {
-  const char *strings[] = {
-    "CL_SUCCESS",
-    "CL_INVALID_PLATFORM",
-    "CL_INVALID_CONTEXT",
-    "CL_INVALID_VALUE",
-    "CL_DEVICE_NOT_AVAILABLE",
-    "CL_DEVICE_NOT_FOUND",
-    "CL_OUT_OF_HOST_MEMORY",
-    "CL_INVALID_DEVICE_TYPE",
-    "CL_PLATFORM_NOT_FOUND_KHR",
-    "UNKNOWN",
-  };
-
   switch (err) {
   case CL_SUCCESS:
-    return strings[0];
+    return opencl_error_strings[0];
   case CL_INVALID_PLATFORM:
-    return strings[1];
+    return opencl_error_strings[1];
   case CL_INVALID_CONTEXT:
-    return strings[2];
+    return opencl_error_strings[2];
   case CL_INVALID_VALUE:
-    return strings[3];
+    return opencl_error_strings[3];
   case CL_DEVICE_NOT_AVAILABLE:
-    return strings[4];
+    return opencl_error_strings[4];
   case CL_DEVICE_NOT_FOUND:
-    return strings[5];
+    return opencl_error_strings[5];
   case CL_OUT_OF_HOST_MEMORY:
-    return strings[6];
+    return opencl_error_strings[6];
   case CL_INVALID_DEVICE_TYPE:
-    return strings[7];
+    return opencl_error_strings[7];
   //case CL_PLATFORM_NOT_FOUND_KHR:
   case -1001:
-    return strings[8];
+    return opencl_error_strings[8];
   default:
-    return strings[9];
+    return opencl_error_strings[9];
   }
 }
  
