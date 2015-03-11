@@ -23,8 +23,8 @@ static void print_device_info(cl_device_id device) {
     clGetDeviceInfo(device, CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(cl_uint), &n_compute_unit, NULL);
     clGetDeviceInfo(device, CL_DEVICE_MAX_CLOCK_FREQUENCY, sizeof(cl_uint), &max_clock_freq, NULL);
     clGetDeviceInfo(device, CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(cl_ulong), &mem_size, NULL);
-
-    printf("  %-14s %s\n  %-14s %s\n  %-14s %u\n  %-14s %u MHz\n  %-14s %llu MB\n", "Name:", name, "Vendor:", vendor, "Compute unit:", n_compute_unit, "Clock freq.:", max_clock_freq, "Mem. size:", mem_size/(1<<20));
+      
+    printf("  %-14s %s\n  %-14s %s\n  %-14s %u\n  %-14s %u MHz\n  %-14s %lu MB\n", "Name:", name, "Vendor:", vendor, "Compute unit:", n_compute_unit, "Clock freq.:", max_clock_freq, "Mem. size:", (long)(mem_size/(1<<20)));
 }
 
 const char *opencl_error_string(cl_int err)
@@ -59,7 +59,8 @@ const char *opencl_error_string(cl_int err)
     return strings[6];
   case CL_INVALID_DEVICE_TYPE:
     return strings[7];
-  case CL_PLATFORM_NOT_FOUND_KHR:
+  //case CL_PLATFORM_NOT_FOUND_KHR:
+  case -1001:
     return strings[8];
   default:
     return strings[9];
