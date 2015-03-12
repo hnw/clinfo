@@ -12,7 +12,7 @@
 #   error no cl.h nor opencl.h
 # endif
 
-static void print_platform_info(cl_platform_id platform_id)
+void print_platform_info(cl_platform_id platform_id)
 {
     char name[128];
     char profile[128];
@@ -30,7 +30,7 @@ static void print_platform_info(cl_platform_id platform_id)
 	   
 }
 
-static void print_device_info(cl_device_id device)
+void print_device_info(cl_device_id device)
 {
     char name[128];
     char vendor[128];
@@ -90,15 +90,13 @@ const char *opencl_error_string(cl_int err)
   }
 }
  
-static void print_all_devices_info(cl_platform_id platform_id)
+void print_all_devices_info(cl_platform_id platform_id)
 {
     int i;
     cl_context context;
     size_t length;
-    cl_platform_id platforms[16];
     cl_device_id devices[16];
     cl_int ret;
-    cl_uint num_platforms;
 
     cl_context_properties prop[]
         = {CL_CONTEXT_PLATFORM, (cl_context_properties)platform_id, 0};
@@ -123,23 +121,31 @@ static void print_all_devices_info(cl_platform_id platform_id)
     }
 }
 
-static void print_all_platforms_info()
+void print_all_platforms_info()
 {
     int i;
-    cl_context context;
-    size_t length;
-    cl_platform_id platforms[16];
-    cl_device_id devices[16];
+    cl_platform_id *platforms;
     cl_int ret;
     cl_uint num_platforms;
 
-    ret = clGetPlatformIDs(sizeof(platforms), platforms, &num_platforms);
+    ret = clGetPlatformIDs(0, NULL, &num_platforms);
     if (ret != CL_SUCCESS) {
       printf("clGetPlatformIds: %s\n", opencl_error_string(ret));
       return;
     }
     printf("The number of OpenCL platforms available: %u\n", num_platforms);
     if (num_platforms <= 0) {
+      return;
+    }
+
+    platforms = calloc(num_platforms, sizeof(cl_platform_id));
+    if (platforms == NULL) {
+      return;
+    }
+
+    ret = clGetPlatformIDs(num_platforms, platforms, 0);
+    if (ret != CL_SUCCESS) {
+      printf("clGetPlatformIds: %s\n", opencl_error_string(ret));
       return;
     }
 
@@ -150,8 +156,12 @@ static void print_all_platforms_info()
       print_platform_info(platforms[i]);
       print_all_devices_info(platforms[i]);
     }
+
+    free(platforms);
 }
+
 
 int main(int argc, const char* argv[]) {
     print_all_platforms_info();
+    return 0;
 }
