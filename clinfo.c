@@ -24,30 +24,46 @@ void print_platform_info(cl_platform_id platform_id)
     clGetPlatformInfo(platform_id, CL_PLATFORM_VENDOR, 128, vendor, NULL);
     clGetPlatformInfo(platform_id, CL_PLATFORM_VERSION, 128, version, NULL);
 
-    printf("  %-14s %s\n  %-14s %s\n  %-14s %s\n  %-14s %s\n",
-	   "Name:", name, "Profile:", profile,
-	   "Vendor:", vendor, "Version:", version);
+    printf("  %-13s %s\n"
+	   "  %-13s %s\n"
+	   "  %-13s %s\n"
+	   "  %-13s %s\n",
+	   "Name:", name,
+	   "Profile:", profile,
+	   "Vendor:", vendor,
+	   "Version:", version);
 	   
 }
 
 void print_device_info(cl_device_id device)
 {
-    char name[128];
-    char vendor[128];
-    cl_uint n_compute_unit, max_clock_freq;
+    char name[128], vendor[128], profile[128], extensions[1024];
+    cl_uint n_compute_units, max_clock_freq;
     cl_ulong mem_size;
  
     clGetDeviceInfo(device, CL_DEVICE_NAME, 128, name, NULL);
     clGetDeviceInfo(device, CL_DEVICE_VENDOR, 128, vendor, NULL);
-    clGetDeviceInfo(device, CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(cl_uint), &n_compute_unit, NULL);
+    clGetDeviceInfo(device, CL_DEVICE_PROFILE, 128, profile, NULL);
+    clGetDeviceInfo(device, CL_DEVICE_EXTENSIONS, 1024, extensions, NULL);
+    clGetDeviceInfo(device, CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(cl_uint), &n_compute_units, NULL);
     clGetDeviceInfo(device, CL_DEVICE_MAX_CLOCK_FREQUENCY, sizeof(cl_uint), &max_clock_freq, NULL);
     clGetDeviceInfo(device, CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(cl_ulong), &mem_size, NULL);
       
-    printf("  %-14s %s\n  %-14s %s\n  %-14s %u\n  %-14s %u MHz\n  %-14s %lu MB\n",
-	   "Name:", name, "Vendor:", vendor,
-	   "Compute units:", n_compute_unit,
-	   "Clock freq.:", max_clock_freq,
-	   "Memory:", (long)(mem_size/(1<<20)));
+    printf("  %-13s %s\n"
+	   "  %-13s %s\n"
+	   "  %-13s %s\n"
+	   "  %-13s %u\n"
+	   "  %-13s %u MHz\n"
+	   "  %-13s %lu MB\n"
+	   "  %-13s %s\n",
+	   "Name:", name,
+	   "Vendor:", vendor,
+	   "Profile:", profile,
+	   "OpenCL CU:", n_compute_units,
+	   "Clock speed:", max_clock_freq,
+	   "Memory:", (long)(mem_size/(1<<20)),
+	   "Extensions:", extensions
+	   );
 }
 
 const char *opencl_error_strings[] = {
