@@ -1,5 +1,6 @@
 #include "config.h"
 #include <stdio.h>
+#include <string.h>
 
 # if defined(HAVE_WINDOWS_H) && defined(_WIN32)
 #   include <windows.h>
@@ -15,13 +16,13 @@
 void print_platform_info(cl_platform_id platform_id)
 {
     char name[128];
-    char profile[128];
     char vendor[128];
+    char profile[128];
     char version[128];
  
     clGetPlatformInfo(platform_id, CL_PLATFORM_NAME, 128, name, NULL);
-    clGetPlatformInfo(platform_id, CL_PLATFORM_PROFILE, 128, profile, NULL);
     clGetPlatformInfo(platform_id, CL_PLATFORM_VENDOR, 128, vendor, NULL);
+    clGetPlatformInfo(platform_id, CL_PLATFORM_PROFILE, 128, profile, NULL);
     clGetPlatformInfo(platform_id, CL_PLATFORM_VERSION, 128, version, NULL);
 
     printf("  %-13s %s\n"
@@ -29,8 +30,8 @@ void print_platform_info(cl_platform_id platform_id)
 	   "  %-13s %s\n"
 	   "  %-13s %s\n",
 	   "Name:", name,
-	   "Profile:", profile,
 	   "Vendor:", vendor,
+	   "Profile:", profile,
 	   "Version:", version);
 	   
 }
@@ -54,16 +55,25 @@ void print_device_info(cl_device_id device)
 	   "  %-13s %s\n"
 	   "  %-13s %u\n"
 	   "  %-13s %u MHz\n"
-	   "  %-13s %lu MB\n"
-	   "  %-13s %s\n",
+	   "  %-13s %lu MB\n",
 	   "Name:", name,
 	   "Vendor:", vendor,
 	   "Profile:", profile,
 	   "OpenCL CU:", n_compute_units,
 	   "Clock speed:", max_clock_freq,
-	   "Memory:", (long)(mem_size/(1<<20)),
-	   "Extensions:", extensions
+	   "Memory:", (long)(mem_size/(1<<20))
 	   );
+    if (strlen(extensions) > 0) {
+      const char *sep = " ";
+      char *word, *brkt;
+
+      printf("  Extensions:\n");
+      for (word = strtok_r(extensions, sep, &brkt);
+	   word;
+	   word = strtok_r(NULL, sep, &brkt)) {
+	printf("    %s\n", word);
+      }
+    }
 }
 
 const char *opencl_error_strings[] = {
