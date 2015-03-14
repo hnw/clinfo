@@ -22,7 +22,11 @@ $ ./configure
 $ make
 ```
 
-make installしてもいいですけど、オススメしません。
+OpenCLのヘッダファイルがインクルードパス外に置かれている場合は下記のようにCFLAGSで指定してください。
+
+```
+$ CFLAGS="-I/usr/include/nvidia-340" ./configure
+```
 
 # 実行例
 
